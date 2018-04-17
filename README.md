@@ -1,11 +1,8 @@
 # iziroam-library-php
-iziroam library php API for travel's akun
-
-
+iziroam library php [API for travel's akun](https://iziroam.com/api-document/)
 
 ### Progress method
 [###=================================================] 10%
-
 
 ### Example
 ```php
