@@ -42,9 +42,7 @@ class Iziroam_ApiRequestor {
       CURLOPT_URL => $url,
       CURLOPT_HEADER => 0,
       CURLOPT_HTTPHEADER => array(
-        'Content-Type: application/json',
-        'Accept: application/json',
-        "key: " . $secret_key."",
+        'key: ' . $secret_key,
         'mid: ' . $mid
       ),
       CURLOPT_RETURNTRANSFER => true,
@@ -58,24 +56,25 @@ class Iziroam_ApiRequestor {
       }
       $curl_options = array_replace_recursive($curl_options, Iziroam_Config::$curlOptions, $headerOptions);
     }
-
+    $stringqueryparameter ='';
+    foreach ($data_hash as $key => $value) {
+      $stringqueryparameter.='&'.$key.'='. $value;
+    }
     if ($post) {
-      $curl_options[CURLOPT_POST] = 1;
-      if ($data_hash) {
-        $body = json_encode($data_hash);
-        $curl_options[CURLOPT_POSTFIELDS] = $body;
-      } else {
-        $curl_options[CURLOPT_POSTFIELDS] = '';
-      }
+      $curl_options[CURLOPT_POST] = TRUE;
+      $curl_options[CURLOPT_POSTFIELDS] = ($data_hash);
     }else{
       if ($data_hash) {
-        $curl_options[CURLOPT_URL] = $url.'&';
+        $curl_options[CURLOPT_URL] = $url.$stringqueryparameter;
       }
     }
-
     curl_setopt_array($ch, $curl_options);
     $result = curl_exec($ch);
-    curl_close($ch); 
+    curl_close($ch);
+    if (!is_array(json_decode($result,true))) {
+      $array_return = array('status'=>false,'massage'=>'unknow result, result is not json');
+      $result= json_encode($array_return,true);
+    }
     return $result;
   }
 
